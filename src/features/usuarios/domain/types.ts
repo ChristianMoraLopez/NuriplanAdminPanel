@@ -4,6 +4,7 @@ export interface Usuario {
     email: string;
     contrasena: string;
     aceptaTerminos: boolean;
+    rol: 'admin' | 'usuario';
     fechaRegistro: string;
     ciudad: string;
     localidad: string;

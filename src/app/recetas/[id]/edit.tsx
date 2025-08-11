@@ -1,0 +1,264 @@
+'use client';
+
+
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Loader } from 'rsuite';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+
+interface Receta {
+  recetaId: number;
+  nombre: string;
+  tipoComidaId: number;
+  fit: boolean;
+  instrucciones: string;
+  tiempoPreparacion: number;
+}
+
+interface FormData {
+  nombre: string;
+  tipoComidaId: number;
+  fit: boolean;
+  instrucciones: string;
+  tiempoPreparacion: number;
+}
+
+export default function EditRecetaPage() {
+  const params = useParams();
+  const router = useRouter();
+  const [receta, setReceta] = useState<Receta | null>(null);
+  const [formData, setFormData] = useState<FormData>({
+    nombre: '',
+    tipoComidaId: 1,
+    fit: false,
+    instrucciones: '',
+    tiempoPreparacion: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const recetaId = params.id as string;
+
+  useEffect(() => {
+    const fetchReceta = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:8080/recetas/${recetaId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setReceta(data);
+        setFormData({
+          nombre: data.nombre,
+          tipoComidaId: data.tipoComidaId,
+          fit: data.fit,
+          instrucciones: data.instrucciones,
+          tiempoPreparacion: data.tiempoPreparacion
+        });
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (recetaId) {
+      fetchReceta();
+    }
+  }, [recetaId]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' 
+        ? (e.target as HTMLInputElement).checked
+        : type === 'number' 
+          ? Number(value)
+          : value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.nombre.trim()) {
+      alert('El nombre es obligatorio');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8080/recetas/${recetaId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        router.push(`/recetas/${recetaId}`);
+      } else {
+        const errorData = await response.text();
+        throw new Error(`Error ${response.status}: ${errorData}`);
+      }
+    } catch (err: any) {
+      alert(`Error al guardar: ${err.message}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader size="lg" content="Cargando receta..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          Error: {error}
+        </div>
+        <button 
+          onClick={() => router.back()}
+          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+        >
+          Volver
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <ErrorBoundary>
+      <div className="p-4 max-w-2xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Editar Receta</h1>
+          <p className="text-gray-600 mt-2">Modifica los detalles de la receta</p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Nombre */}
+            <div>
+              <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
+                Nombre de la receta *
+              </label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Ingresa el nombre de la receta"
+              />
+            </div>
+
+            {/* Tipo de Comida ID */}
+            <div>
+              <label htmlFor="tipoComidaId" className="block text-sm font-medium text-gray-700 mb-2">
+                Tipo de Comida ID
+              </label>
+              <input
+                type="number"
+                id="tipoComidaId"
+                name="tipoComidaId"
+                value={formData.tipoComidaId}
+                onChange={handleInputChange}
+                min="1"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Tiempo de Preparación */}
+            <div>
+              <label htmlFor="tiempoPreparacion" className="block text-sm font-medium text-gray-700 mb-2">
+                Tiempo de Preparación (minutos)
+              </label>
+              <input
+                type="number"
+                id="tiempoPreparacion"
+                name="tiempoPreparacion"
+                value={formData.tiempoPreparacion}
+                onChange={handleInputChange}
+                min="0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Tiempo en minutos"
+              />
+            </div>
+
+            {/* Fit */}
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="fit"
+                name="fit"
+                checked={formData.fit}
+                onChange={handleInputChange}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="fit" className="ml-2 block text-sm text-gray-700">
+                ¿Es una receta fit/saludable?
+              </label>
+            </div>
+
+            {/* Instrucciones */}
+            <div>
+              <label htmlFor="instrucciones" className="block text-sm font-medium text-gray-700 mb-2">
+                Instrucciones
+              </label>
+              <textarea
+                id="instrucciones"
+                name="instrucciones"
+                value={formData.instrucciones}
+                onChange={handleInputChange}
+                rows={6}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Describe paso a paso cómo preparar la receta..."
+              />
+            </div>
+
+            {/* Botones */}
+            <div className="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                disabled={saving}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              >
+                {saving ? 'Guardando...' : 'Guardar Cambios'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </ErrorBoundary>
+  );
+}

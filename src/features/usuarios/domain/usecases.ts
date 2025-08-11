@@ -17,8 +17,8 @@ export async function registerUsuario(usuario: Omit<Usuario, 'id'>): Promise<Usu
 }
 
 // Login tradicional
-export async function loginUsuario(email: string, password: string): Promise<{usuario: Usuario, token: string}> {
-  return api<{usuario: Usuario, token: string}>('/login', 'POST', { email, password })
+export async function loginUsuario(email: string, contrasena: string): Promise<{usuario: Usuario, token: string}> {
+  return api<{usuario: Usuario, token: string}>('/login', 'POST', { email, contrasena })
 }
 
 // Login con Google

@@ -4,7 +4,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://nutriplanbacken
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
-// Tipos que coinciden con el backend
 type ApiSuccess<T> = {
   data: T
   message?: string
@@ -30,7 +29,6 @@ export async function api<T = any>(
     'Content-Type': 'application/json',
   }
 
-  // Si hay token, lo metemos en el header
   const authToken = token || (typeof window !== 'undefined' ? localStorage.getItem('token') : null)
   if (authToken) {
     headers['Authorization'] = `Bearer ${authToken}`
@@ -48,14 +46,12 @@ export async function api<T = any>(
   }
 
   const data = await res.json()
-  console.log('API Response:', data) // Debug log
+  console.log('API Response:', data)
 
-  // Si es un array, devolverlo directamente
   if (Array.isArray(data)) {
     return data as T
   }
 
-  // Si no es un array, verificar si es una respuesta ApiResponse
   if (data.data !== undefined) {
     return data.data as T
   }

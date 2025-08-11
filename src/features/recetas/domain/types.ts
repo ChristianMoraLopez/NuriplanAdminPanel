@@ -1,29 +1,27 @@
 export interface Receta {
-    id: number;
+    recetaId: number;
     nombre: string;
-    descripcion: string;
-    tiempoPreparacion: number;
-    porciones: number;
-    dificultad: string;
     tipoComidaId: number;
-    metodoPreparacionId: number;
-    usuarioId: number;
+    fit: boolean;
+    instrucciones: string;
+    tiempoPreparacion: number;
     ingredientes?: RecetaIngrediente[];
 }
 
 export interface RecetaIngrediente {
     recetaId: number;
     ingredienteId: number;
-    cantidad: number;
-    unidad: string;
+    nombreIngrediente: string | null;
+    cantidad: number | null;
+    unidad: string | null;
 }
 
 export interface TipoComida {
-    id: number;
+    tipoComidaId: number;
     nombre: string;
 }
 
 export interface MetodoPreparacion {
-    id: number;
+    metodoId: number;
     nombre: string;
 }
