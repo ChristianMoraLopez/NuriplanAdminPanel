@@ -137,7 +137,7 @@ export default function RecetaDetailPage() {
               {receta.ingredientes && receta.ingredientes.length > 0 ? (
                 <ul className="list-disc pl-5 space-y-2">
                   {receta.ingredientes.map((ingrediente) => (
-                    <li key={`${ingrediente.recetaId}-${ingrediente.ingredienteId}`}>
+                    <li key={`${ingrediente.recetaId}-${ingrediente.ingrediente_id}`}>
                       {ingrediente.nombreIngrediente || 'Ingrediente desconocido'} -{' '}
                       {ingrediente.cantidad != null ? ingrediente.cantidad : 'N/A'}{' '}
                       {ingrediente.unidad || ''}

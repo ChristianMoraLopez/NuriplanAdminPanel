@@ -1,12 +1,16 @@
 export interface Ingrediente {
-    id: number;
-    nombre: string;
-    categoriaId: number;
-    unidadMedida: string;
-    info_nutricional?: string;
+  ingrediente_id: number; // Changed from id
+  nombre: string;
+  categoriaId: number;
+  fit: boolean;
+  disponibleBogota: boolean;
+  fotografia: string | null;
+  unidadMedida: string;
+  info_nutricional?: string;
+  calorias?: string | null;
 }
 
 export interface CategoriaIngrediente {
-    id: number;
-    nombre: string;
+  id: number;
+  nombre: string;
 }

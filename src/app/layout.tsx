@@ -8,16 +8,17 @@ import { useEffect, useState } from 'react';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, loading } = useAuth();
+  const { user, loading, checkAuth } = useAuth();
   const [mounted, setMounted] = useState(false);
 
-  // Asegurar que el componente está montado en el cliente
   useEffect(() => {
     setMounted(true);
+    console.log('RootLayout: Component mounted, checking auth...');
+    checkAuth(); // Ensure auth is checked on mount
   }, []);
 
-  // Mostrar loading mientras se monta el componente o se está cargando el usuario
   if (!mounted || loading) {
+    console.log('RootLayout: Showing loading state', { mounted, loading });
     return (
       <html lang="es">
         <body className="flex h-screen bg-screen-100">
@@ -29,19 +30,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     );
   }
 
-  // Definir rutas públicas donde no debe aparecer el sidebar
   const publicRoutes = ['/', '/login', '/registro'];
   const isPublicRoute = publicRoutes.includes(pathname);
-  
-  // Mostrar sidebar solo si el usuario está autenticado y no está en una ruta pública
   const shouldShowSidebar = user && !isPublicRoute;
 
-  console.log('Layout Debug:', {
+  console.log('RootLayout Debug:', {
     pathname,
-    user: !!user,
+    user: user ? { id: user.usuarioId, nombre: user.nombre, rol: user.rol } : null,
     loading,
     isPublicRoute,
-    shouldShowSidebar
+    shouldShowSidebar,
   });
 
   return (

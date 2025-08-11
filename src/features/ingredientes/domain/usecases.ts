@@ -9,7 +9,7 @@ export async function fetchCategorias(): Promise<CategoriaIngrediente[]> {
     return api<CategoriaIngrediente[]>('/categorias')
 }
 
-export async function createIngrediente(ingrediente: Omit<Ingrediente, 'id'>): Promise<Ingrediente> {
+export async function createIngrediente(ingrediente: Omit<Ingrediente, 'ingrediente_id'>): Promise<Ingrediente> {
     return api<Ingrediente>('/ingredientes', 'POST', ingrediente)
 }
 
