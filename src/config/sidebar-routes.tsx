@@ -1,17 +1,25 @@
 import {
   User,
+  Tag,
   Utensils,
   Leaf,
   LayoutDashboard,
   BookOpen,
   ChefHat
 } from "lucide-react";
+import { lazy } from "react";
 
 export const sidebarRoutes = [
   {
     label: "Dashboard",
     href: "/",
     icon: LayoutDashboard
+  },
+  {
+    label: "Categorías",
+    href: "/categorias",
+    icon: Tag,
+
   },
   {
     label: "Usuarios",

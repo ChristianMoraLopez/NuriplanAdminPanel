@@ -50,7 +50,7 @@ export function useAuth() {
         console.log('useAuth: No token found, setting user to null');
         setUser(null);
         setLoading(false);
-        if (!['/', '/login', '/registro'].includes(window.location.pathname)) {
+        if (!['/'].includes(window.location.pathname)) {
           console.log('useAuth: Redirecting to / due to no token');
           router.push('/');
         }
@@ -72,7 +72,7 @@ export function useAuth() {
       console.error('useAuth: Auth check failed:', err);
       localStorage.removeItem('token');
       setUser(null);
-      if (!['/', '/login', '/registro'].includes(window.location.pathname)) {
+      if (!['/'].includes(window.location.pathname)) {
         console.log('useAuth: Redirecting to / due to auth failure');
         router.push('/');
       }

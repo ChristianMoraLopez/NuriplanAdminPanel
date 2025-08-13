@@ -52,7 +52,7 @@ export function RecetasForm({ initialData, onSubmit, isSubmitting }: RecetasForm
         setIngredientes(ingreds);
         setCategorias(cats);
         if (cats.length > 0 && newIngredientData.categoriaId === 0) {
-          setNewIngredientData(prev => ({ ...prev, categoriaId: cats[0].id }));
+          setNewIngredientData(prev => ({ ...prev, categoriaId: cats[0].categoriaId }));
         }
       } catch (err) {
         toast.error('Error al cargar listas');
@@ -146,7 +146,7 @@ export function RecetasForm({ initialData, onSubmit, isSubmitting }: RecetasForm
       setShowNewIngredientModal(false);
       setNewIngredientData({
         nombre: '',
-        categoriaId: categorias.length > 0 ? categorias[0].id : 0,
+        categoriaId: categorias.length > 0 ? categorias[0].categoriaId : 0,
         unidadMedida: '',
         info_nutricional: '',
         calorias: null,
@@ -421,7 +421,7 @@ export function RecetasForm({ initialData, onSubmit, isSubmitting }: RecetasForm
                   >
                     <option value="0">Selecciona una categoría</option>
                     {categorias.map(cat => (
-                      <option key={cat.id} value={cat.id}>
+                      <option key={cat.categoriaId} value={cat.categoriaId}>
                         {cat.nombre}
                       </option>
                     ))}

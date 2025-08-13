@@ -184,7 +184,7 @@ export function IngredientesForm({ ingrediente = {}, onSubmit }: IngredientesFor
                                             {isLoading ? 'Cargando categorías...' : 'Selecciona una categoría'}
                                         </option>
                                         {categorias.map((categoria) => (
-                                            <option key={categoria.id} value={categoria.id}>
+                                            <option key={categoria.categoriaId} value={categoria.categoriaId}>
                                                 {categoria.nombre}
                                             </option>
                                         ))}
